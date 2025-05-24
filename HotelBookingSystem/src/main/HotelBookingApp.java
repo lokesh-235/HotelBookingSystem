@@ -1,18 +1,22 @@
 package main;
 
-import java.util.*;
+import java.util.*;	
+import java.io.*;
 import java.util.stream.*;
 
 import models.*;
 import exceptions.*;
+import services.*;
+
 
 public class HotelBookingApp {
 	
 	static int NoOfRooms=100;
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException{
 		List<Room> rooms=Room.createRooms(NoOfRooms);
-		
+		Map<String,User> users=User.createUsers();
+	
 //		for(int i=0;i<100;i++)
 //			System.out.println(rooms.get(i));
 		
@@ -27,19 +31,49 @@ public class HotelBookingApp {
 		String to=StayDates[1];
 //		System.out.println(from+" "+to);
 		
-		List<Room> availableRooms=AvailableRooms(roomType,rooms);
-		displayRooms(availableRooms);
+		List<Room> availableRooms=BookingServices.getAvailableRooms(roomType,rooms);
+		
+		BookingServices.displayRooms(availableRooms);
 		System.out.println("Please Enter RoomID from the given rooms : ");
 		int roomId=sc.nextInt();
 		
 		
-		boolean isAvailable=isRoomAvailable(availableRooms, roomId);
+		boolean isAvailable=BookingServices.isRoomAvailable(availableRooms, roomId);
 		try
 		{
 			if(isAvailable)
 			{
 				//Start Booking
-				System.out.println("Booked");
+				BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+				
+				System.out.println("Booking in process ");
+				
+				System.out.println("Please Enter your userId : ");
+				String userId=br.readLine().trim();
+				
+				System.out.println(userId+" "+users.get(userId));
+				System.out.println("Please Enter your password : ");
+				String password=br.readLine().trim();
+				
+				try {
+					
+					if(users.containsKey(userId)&&users.get(userId).getPassword().equals(password))
+					{
+//						System.out.println("Start Booking");
+						
+					}
+			
+					else
+						throw new UserIdOrPasswordDoesNotMatchException("Please Enter Correct User ID and Password");
+					
+						
+				}
+				catch(UserIdOrPasswordDoesNotMatchException e) {
+					System.out.println(e);
+				}
+				
+				
+				
 			}
 			
 			else
@@ -54,33 +88,7 @@ public class HotelBookingApp {
 		
 	}
 
-	private static boolean isRoomAvailable(List<Room> availableRooms,int roomId) {
-		// TODO Auto-generated method stub
-		for(Room room : availableRooms)
-			if(room.getRoomId()==roomId)
-				return true;
-		return false;
-	}
 
-	private static void displayRooms(List<Room> availableRooms) {
-		// TODO Auto-generated method stub
-		if(availableRooms.isEmpty())
-	    	System.out.println("No rooms available rooms");
-	    else
-	    	System.out.println("Available Rooms are : \n\n"+availableRooms);
-	}
-
-	private static List<Room> AvailableRooms(String roomType,List<Room> rooms) {
-		// TODO Auto-generated method stub
-	    List<Room> availableRooms= rooms.stream().
-	    		filter(room->room.getIsAvailable()&&room.getRoomType().equalsIgnoreCase(roomType))
-	    		.collect(Collectors.toList());
-	    
-	    return availableRooms;
-	    
-	}
-	
-	
 	
 }
 

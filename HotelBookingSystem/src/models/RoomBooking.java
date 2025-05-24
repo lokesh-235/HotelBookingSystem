@@ -5,18 +5,24 @@ package models;
 import java.time.LocalDate;
 
 public class RoomBooking {
+	private String BookingId;
     private Room room;
     private User user; 
     private LocalDate fromDate;
     private LocalDate toDate;
 
-    public RoomBooking(Room room, User user, LocalDate fromDate, LocalDate toDate) {
-        this.room = room;
+    public RoomBooking(String BookingId,Room room, User user, LocalDate fromDate, LocalDate toDate) {
+        this.BookingId=BookingId;
+    	this.room = room;
         this.user = user;
         this.fromDate = fromDate;
         this.toDate = toDate;
     }
 
+    public String getBookingId() {
+    	return BookingId;
+    }
+    
     public Room getRoom() {
         return room;
     }
